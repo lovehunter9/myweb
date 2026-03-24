@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创作工坊 - 小说创作助手</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@12/lib/browser/math.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="logo">创</span>
+            <span class="logo-text">创作工坊</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item active" data-page="calculator">
+                <span class="nav-icon">⊞</span>
+                <span class="nav-label">科学计算器</span>
+            </li>
+            <li class="nav-item" data-page="character-name">
+                <span class="nav-icon">人</span>
+                <span class="nav-label">角色起名</span>
+            </li>
+            <li class="nav-item" data-page="character-setting">
+                <span class="nav-icon">卷</span>
+                <span class="nav-label">角色设定</span>
+            </li>
+            <li class="nav-item" data-page="background">
+                <span class="nav-icon">域</span>
+                <span class="nav-label">背景设定</span>
+            </li>
+            <li class="nav-item" data-page="novel-name">
+                <span class="nav-icon">书</span>
+                <span class="nav-label">小说起名</span>
+            </li>
+            <li class="nav-item" data-page="cover">
+                <span class="nav-icon">画</span>
+                <span class="nav-label">封面生成</span>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="ai-status" id="aiStatus" title="AI 模型状态">
+                <span class="status-dot offline"></span>
+                <span class="nav-label">AI 离线</span>
+            </div>
+            <button class="theme-toggle" id="themeToggle" title="切换主题">
+                <span id="themeIcon">☽</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+
+        <!-- Calculator Page -->
+        <section class="page active" id="page-calculator">
+            <div class="page-header">
+                <h1>科学计算器</h1>
+                <p class="page-desc">支持三角函数、对数、幂运算等科学计算</p>
+            </div>
+            <div class="calculator-container">
+                <div class="calc-main">
+                    <div class="calc-display">
+                        <div class="calc-expression" id="calcExpression"></div>
+                        <div class="calc-result" id="calcResult">0</div>
+                        <div class="calc-mode">
+                            <button class="mode-btn active" id="degBtn" onclick="Calculator.setAngleMode('deg')">DEG</button>
+                            <button class="mode-btn" id="radBtn" onclick="Calculator.setAngleMode('rad')">RAD</button>
+                        </div>
+                    </div>
+                    <div class="calc-buttons">
+                        <div class="calc-row">
+                            <button class="calc-btn func" onclick="Calculator.input('sin(')">sin</button>
+                            <button class="calc-btn func" onclick="Calculator.input('cos(')">cos</button>
+                            <button class="calc-btn func" onclick="Calculator.input('tan(')">tan</button>
+                            <button class="calc-btn func" onclick="Calculator.input('log(')">log</button>
+                            <button class="calc-btn func" onclick="Calculator.input('ln(')">ln</button>
+                        </div>
+                        <div class="calc-row">
+                            <button class="calc-btn func" onclick="Calculator.input('asin(')">sin⁻¹</button>
+                            <button class="calc-btn func" onclick="Calculator.input('acos(')">cos⁻¹</button>
+                            <button class="calc-btn func" onclick="Calculator.input('atan(')">tan⁻¹</button>
+                            <button class="calc-btn func" onclick="Calculator.input('sqrt(')">√</button>
+                            <button class="calc-btn func" onclick="Calculator.input('^')">xⁿ</button>
+                        </div>
+                        <div class="calc-row">
+                            <button class="calc-btn func" onclick="Calculator.input('pi')">π</button>
+                            <button class="calc-btn func" onclick="Calculator.input('e')">e</button>
+                            <button class="calc-btn func" onclick="Calculator.input('(')">(</button>
+                            <button class="calc-btn func" onclick="Calculator.input(')')">)</button>
+                            <button class="calc-btn op" onclick="Calculator.input('%')">%</button>
+                        </div>
+                        <div class="calc-row">
+                            <button class="calc-btn num" onclick="Calculator.input('7')">7</button>
+                            <button class="calc-btn num" onclick="Calculator.input('8')">8</button>
+                            <button class="calc-btn num" onclick="Calculator.input('9')">9</button>
+                            <button class="calc-btn op" onclick="Calculator.input('/')">&divide;</button>
+                            <button class="calc-btn danger" onclick="Calculator.backspace()">⌫</button>
+                        </div>
+                        <div class="calc-row">
+                            <button class="calc-btn num" onclick="Calculator.input('4')">4</button>
+                            <button class="calc-btn num" onclick="Calculator.input('5')">5</button>
+                            <button class="calc-btn num" onclick="Calculator.input('6')">6</button>
+                            <button class="calc-btn op" onclick="Calculator.input('*')">&times;</button>
+                            <button class="calc-btn danger" onclick="Calculator.clear()">C</button>
+                        </div>
+                        <div class="calc-row">
+                            <button class="calc-btn num" onclick="Calculator.input('1')">1</button>
+                            <button class="calc-btn num" onclick="Calculator.input('2')">2</button>
+                            <button class="calc-btn num" onclick="Calculator.input('3')">3</button>
+                            <button class="calc-btn op" onclick="Calculator.input('-')">−</button>
+                            <button class="calc-btn func" onclick="Calculator.input('abs(')">|x|</button>
+                        </div>
+                        <div class="calc-row">
+                            <button class="calc-btn num" onclick="Calculator.input('0')">0</button>
+                            <button class="calc-btn num" onclick="Calculator.input('.')">.</button>
+                            <button class="calc-btn func" onclick="Calculator.input('!')" title="阶乘">n!</button>
+                            <button class="calc-btn op" onclick="Calculator.input('+')">+</button>
+                            <button class="calc-btn primary" onclick="Calculator.evaluate()">=</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="calc-history">
+                    <div class="history-header">
+                        <h3>计算历史</h3>
+                        <button class="btn-text" onclick="Calculator.clearHistory()">清空</button>
+                    </div>
+                    <div class="history-list" id="calcHistoryList">
+                        <p class="empty-hint">暂无历史记录</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Character Name Page -->
+        <section class="page" id="page-character-name">
+            <div class="page-header">
+                <h1>角色起名</h1>
+                <p class="page-desc">根据小说类型和角色性别，智能生成富有内涵的角色名</p>
+            </div>
+            <div class="generator-layout">
+                <div class="gen-controls card">
+                    <h3>生成设置</h3>
+                    <div class="form-group">
+                        <label>小说类型</label>
+                        <select id="charNameGenre">
+                            <option value="仙侠">仙侠</option>
+                            <option value="玄幻">玄幻</option>
+                            <option value="武侠">武侠</option>
+                            <option value="科幻">科幻</option>
+                            <option value="都市">都市</option>
+                            <option value="古代言情">古代言情</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>角色性别</label>
+                        <div class="radio-group">
+                            <label class="radio-label"><input type="radio" name="charNameGender" value="male" checked> 男性</label>
+                            <label class="radio-label"><input type="radio" name="charNameGender" value="female"> 女性</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>生成数量</label>
+                        <input type="range" id="charNameCount" min="3" max="15" value="5">
+                        <span class="range-value" id="charNameCountVal">5</span>
+                    </div>
+                    <div class="form-group ai-toggle">
+                        <label class="switch-label">
+                            <input type="checkbox" id="charNameAI">
+                            <span class="switch"></span>
+                            使用 AI 增强
+                        </label>
+                    </div>
+                    <button class="btn-primary" onclick="Generator.generateCharacterName()">生成名字</button>
+                </div>
+                <div class="gen-results card">
+                    <h3>生成结果</h3>
+                    <div id="charNameResults" class="results-area">
+                        <p class="empty-hint">点击「生成名字」开始</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Character Setting Page -->
+        <section class="page" id="page-character-setting">
+            <div class="page-header">
+                <h1>角色设定生成</h1>
+                <p class="page-desc">一键生成完整角色设定：名字、性格、身世、能力、外貌</p>
+            </div>
+            <div class="generator-layout">
+                <div class="gen-controls card">
+                    <h3>生成设置</h3>
+                    <div class="form-group">
+                        <label>小说类型</label>
+                        <select id="charSettingGenre">
+                            <option value="仙侠">仙侠</option>
+                            <option value="玄幻">玄幻</option>
+                            <option value="武侠">武侠</option>
+                            <option value="科幻">科幻</option>
+                            <option value="都市">都市</option>
+                            <option value="古代言情">古代言情</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>角色性别</label>
+                        <div class="radio-group">
+                            <label class="radio-label"><input type="radio" name="charSettingGender" value="male" checked> 男性</label>
+                            <label class="radio-label"><input type="radio" name="charSettingGender" value="female"> 女性</label>
+                        </div>
+                    </div>
+                    <div class="form-group ai-toggle">
+                        <label class="switch-label">
+                            <input type="checkbox" id="charSettingAI">
+                            <span class="switch"></span>
+                            使用 AI 增强
+                        </label>
+                    </div>
+                    <button class="btn-primary" onclick="Generator.generateCharacterSetting()">生成角色设定</button>
+                </div>
+                <div class="gen-results card">
+                    <h3>角色设定卡</h3>
+                    <div id="charSettingResults" class="results-area">
+                        <p class="empty-hint">点击「生成角色设定」开始</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Background Setting Page -->
+        <section class="page" id="page-background">
+            <div class="page-header">
+                <h1>背景设定生成</h1>
+                <p class="page-desc">生成完整的小说世界观：世界描述、力量体系、势力格局、地理环境</p>
+            </div>
+            <div class="generator-layout">
+                <div class="gen-controls card">
+                    <h3>生成设置</h3>
+                    <div class="form-group">
+                        <label>小说类型</label>
+                        <select id="bgGenre">
+                            <option value="仙侠">仙侠</option>
+                            <option value="玄幻">玄幻</option>
+                            <option value="武侠">武侠</option>
+                            <option value="科幻">科幻</option>
+                            <option value="都市">都市</option>
+                            <option value="古代言情">古代言情</option>
+                        </select>
+                    </div>
+                    <div class="form-group ai-toggle">
+                        <label class="switch-label">
+                            <input type="checkbox" id="bgAI">
+                            <span class="switch"></span>
+                            使用 AI 增强
+                        </label>
+                    </div>
+                    <button class="btn-primary" onclick="Generator.generateBackground()">生成世界观</button>
+                </div>
+                <div class="gen-results card">
+                    <h3>世界观设定</h3>
+                    <div id="bgResults" class="results-area">
+                        <p class="empty-hint">点击「生成世界观」开始</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Novel Name Page -->
+        <section class="page" id="page-novel-name">
+            <div class="page-header">
+                <h1>小说起名</h1>
+                <p class="page-desc">根据类型生成吸引人的小说书名</p>
+            </div>
+            <div class="generator-layout">
+                <div class="gen-controls card">
+                    <h3>生成设置</h3>
+                    <div class="form-group">
+                        <label>小说类型</label>
+                        <select id="novelNameGenre">
+                            <option value="仙侠">仙侠</option>
+                            <option value="玄幻">玄幻</option>
+                            <option value="武侠">武侠</option>
+                            <option value="科幻">科幻</option>
+                            <option value="都市">都市</option>
+                            <option value="古代言情">古代言情</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>生成数量</label>
+                        <input type="range" id="novelNameCount" min="3" max="15" value="5">
+                        <span class="range-value" id="novelNameCountVal">5</span>
+                    </div>
+                    <div class="form-group ai-toggle">
+                        <label class="switch-label">
+                            <input type="checkbox" id="novelNameAI">
+                            <span class="switch"></span>
+                            使用 AI 增强
+                        </label>
+                    </div>
+                    <button class="btn-primary" onclick="Generator.generateNovelName()">生成书名</button>
+                </div>
+                <div class="gen-results card">
+                    <h3>生成结果</h3>
+                    <div id="novelNameResults" class="results-area">
+                        <p class="empty-hint">点击「生成书名」开始</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cover Page -->
+        <section class="page" id="page-cover">
+            <div class="page-header">
+                <h1>封面生成</h1>
+                <p class="page-desc">输入书名和作者，自动生成风格化小说封面</p>
+            </div>
+            <div class="generator-layout">
+                <div class="gen-controls card">
+                    <h3>封面设置</h3>
+                    <div class="form-group">
+                        <label>小说书名</label>
+                        <input type="text" id="coverTitle" placeholder="请输入书名...">
+                    </div>
+                    <div class="form-group">
+                        <label>作者笔名</label>
+                        <input type="text" id="coverAuthor" placeholder="请输入笔名...">
+                    </div>
+                    <div class="form-group">
+                        <label>小说类型</label>
+                        <select id="coverGenre">
+                            <option value="仙侠">仙侠</option>
+                            <option value="玄幻">玄幻</option>
+                            <option value="武侠">武侠</option>
+                            <option value="科幻">科幻</option>
+                            <option value="都市">都市</option>
+                            <option value="古代言情">古代言情</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" onclick="Generator.generateCover()">生成封面</button>
+                    <button class="btn-secondary" id="downloadCoverBtn" style="display:none" onclick="Generator.downloadCover()">下载封面</button>
+                </div>
+                <div class="gen-results card cover-preview-card">
+                    <h3>封面预览</h3>
+                    <div id="coverResults" class="results-area cover-area">
+                        <p class="empty-hint">点击「生成封面」开始</p>
+                        <canvas id="coverCanvas" width="600" height="900" style="display:none"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/calculator.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/generator.js') }}"></script>
+</body>
+</html>
