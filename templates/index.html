@@ -11,33 +11,37 @@
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <span class="logo">创</span>
+            <span class="logo">🌿</span>
             <span class="logo-text">创作工坊</span>
         </div>
         <ul class="nav-list">
             <li class="nav-item active" data-page="calculator">
-                <span class="nav-icon">⊞</span>
+                <span class="nav-icon">🔢</span>
                 <span class="nav-label">科学计算器</span>
             </li>
             <li class="nav-item" data-page="character-name">
-                <span class="nav-icon">人</span>
+                <span class="nav-icon">✨</span>
                 <span class="nav-label">角色起名</span>
             </li>
             <li class="nav-item" data-page="character-setting">
-                <span class="nav-icon">卷</span>
+                <span class="nav-icon">📋</span>
                 <span class="nav-label">角色设定</span>
             </li>
             <li class="nav-item" data-page="background">
-                <span class="nav-icon">域</span>
+                <span class="nav-icon">🌍</span>
                 <span class="nav-label">背景设定</span>
             </li>
             <li class="nav-item" data-page="novel-name">
-                <span class="nav-icon">书</span>
+                <span class="nav-icon">📖</span>
                 <span class="nav-label">小说起名</span>
             </li>
             <li class="nav-item" data-page="cover">
-                <span class="nav-icon">画</span>
+                <span class="nav-icon">🎨</span>
                 <span class="nav-label">封面生成</span>
+            </li>
+            <li class="nav-item" data-page="novel-analysis">
+                <span class="nav-icon">📚</span>
+                <span class="nav-label">小说分析仿写</span>
             </li>
         </ul>
         <div class="sidebar-footer">
@@ -46,7 +50,7 @@
                 <span class="nav-label">AI 离线</span>
             </div>
             <button class="theme-toggle" id="themeToggle" title="切换主题">
-                <span id="themeIcon">☽</span>
+                <span id="themeIcon">🌙</span>
             </button>
         </div>
     </nav>
@@ -58,8 +62,8 @@
         <!-- Calculator Page -->
         <section class="page active" id="page-calculator">
             <div class="page-header">
-                <h1>科学计算器</h1>
-                <p class="page-desc">支持三角函数、对数、幂运算等科学计算</p>
+                <h1><span class="h-icon">🔢</span> <span class="h-text">科学计算器</span></h1>
+                <p class="page-desc">支持三角函数、对数、幂运算等科学计算，带历史记录</p>
             </div>
             <div class="calculator-container">
                 <div class="calc-main">
@@ -117,7 +121,7 @@
                         <div class="calc-row">
                             <button class="calc-btn num" onclick="Calculator.input('0')">0</button>
                             <button class="calc-btn num" onclick="Calculator.input('.')">.</button>
-                            <button class="calc-btn func" onclick="Calculator.input('!')" title="阶乘">n!</button>
+                            <button class="calc-btn func" onclick="Calculator.input('!')">n!</button>
                             <button class="calc-btn op" onclick="Calculator.input('+')">+</button>
                             <button class="calc-btn primary" onclick="Calculator.evaluate()">=</button>
                         </div>
@@ -125,7 +129,7 @@
                 </div>
                 <div class="calc-history">
                     <div class="history-header">
-                        <h3>计算历史</h3>
+                        <h3>📝 历史记录</h3>
                         <button class="btn-text" onclick="Calculator.clearHistory()">清空</button>
                     </div>
                     <div class="history-list" id="calcHistoryList">
@@ -138,21 +142,21 @@
         <!-- Character Name Page -->
         <section class="page" id="page-character-name">
             <div class="page-header">
-                <h1>角色起名</h1>
+                <h1><span class="h-icon">✨</span> <span class="h-text">角色起名</span></h1>
                 <p class="page-desc">根据小说类型和角色性别，智能生成富有内涵的角色名</p>
             </div>
             <div class="generator-layout">
                 <div class="gen-controls card">
-                    <h3>生成设置</h3>
+                    <h3><span class="card-icon">⚙️</span> 生成设置</h3>
                     <div class="form-group">
                         <label>小说类型</label>
                         <select id="charNameGenre">
-                            <option value="仙侠">仙侠</option>
-                            <option value="玄幻">玄幻</option>
-                            <option value="武侠">武侠</option>
-                            <option value="科幻">科幻</option>
-                            <option value="都市">都市</option>
-                            <option value="古代言情">古代言情</option>
+                            <option value="仙侠">🏔️ 仙侠</option>
+                            <option value="玄幻">⚡ 玄幻</option>
+                            <option value="武侠">⚔️ 武侠</option>
+                            <option value="科幻">🚀 科幻</option>
+                            <option value="都市">🏙️ 都市</option>
+                            <option value="古代言情">🌸 古代言情</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -171,15 +175,15 @@
                         <label class="switch-label">
                             <input type="checkbox" id="charNameAI">
                             <span class="switch"></span>
-                            使用 AI 增强
+                            <span>使用 AI 增强</span>
                         </label>
                     </div>
-                    <button class="btn-primary" onclick="Generator.generateCharacterName()">生成名字</button>
+                    <button class="btn-primary" onclick="Generator.generateCharacterName()">✨ 生成名字</button>
                 </div>
                 <div class="gen-results card">
-                    <h3>生成结果</h3>
+                    <h3><span class="card-icon">📝</span> 生成结果</h3>
                     <div id="charNameResults" class="results-area">
-                        <p class="empty-hint">点击「生成名字」开始</p>
+                        <p class="empty-hint">点击「生成名字」开始 ✨</p>
                     </div>
                 </div>
             </div>
@@ -188,21 +192,21 @@
         <!-- Character Setting Page -->
         <section class="page" id="page-character-setting">
             <div class="page-header">
-                <h1>角色设定生成</h1>
+                <h1><span class="h-icon">📋</span> <span class="h-text">角色设定生成</span></h1>
                 <p class="page-desc">一键生成完整角色设定：名字、性格、身世、能力、外貌</p>
             </div>
             <div class="generator-layout">
                 <div class="gen-controls card">
-                    <h3>生成设置</h3>
+                    <h3><span class="card-icon">⚙️</span> 生成设置</h3>
                     <div class="form-group">
                         <label>小说类型</label>
                         <select id="charSettingGenre">
-                            <option value="仙侠">仙侠</option>
-                            <option value="玄幻">玄幻</option>
-                            <option value="武侠">武侠</option>
-                            <option value="科幻">科幻</option>
-                            <option value="都市">都市</option>
-                            <option value="古代言情">古代言情</option>
+                            <option value="仙侠">🏔️ 仙侠</option>
+                            <option value="玄幻">⚡ 玄幻</option>
+                            <option value="武侠">⚔️ 武侠</option>
+                            <option value="科幻">🚀 科幻</option>
+                            <option value="都市">🏙️ 都市</option>
+                            <option value="古代言情">🌸 古代言情</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -216,15 +220,15 @@
                         <label class="switch-label">
                             <input type="checkbox" id="charSettingAI">
                             <span class="switch"></span>
-                            使用 AI 增强
+                            <span>使用 AI 增强</span>
                         </label>
                     </div>
-                    <button class="btn-primary" onclick="Generator.generateCharacterSetting()">生成角色设定</button>
+                    <button class="btn-primary" onclick="Generator.generateCharacterSetting()">📋 生成角色设定</button>
                 </div>
                 <div class="gen-results card">
-                    <h3>角色设定卡</h3>
+                    <h3><span class="card-icon">🎭</span> 角色设定卡</h3>
                     <div id="charSettingResults" class="results-area">
-                        <p class="empty-hint">点击「生成角色设定」开始</p>
+                        <p class="empty-hint">点击「生成角色设定」开始 📋</p>
                     </div>
                 </div>
             </div>
@@ -233,36 +237,36 @@
         <!-- Background Setting Page -->
         <section class="page" id="page-background">
             <div class="page-header">
-                <h1>背景设定生成</h1>
+                <h1><span class="h-icon">🌍</span> <span class="h-text">背景设定生成</span></h1>
                 <p class="page-desc">生成完整的小说世界观：世界描述、力量体系、势力格局、地理环境</p>
             </div>
             <div class="generator-layout">
                 <div class="gen-controls card">
-                    <h3>生成设置</h3>
+                    <h3><span class="card-icon">⚙️</span> 生成设置</h3>
                     <div class="form-group">
                         <label>小说类型</label>
                         <select id="bgGenre">
-                            <option value="仙侠">仙侠</option>
-                            <option value="玄幻">玄幻</option>
-                            <option value="武侠">武侠</option>
-                            <option value="科幻">科幻</option>
-                            <option value="都市">都市</option>
-                            <option value="古代言情">古代言情</option>
+                            <option value="仙侠">🏔️ 仙侠</option>
+                            <option value="玄幻">⚡ 玄幻</option>
+                            <option value="武侠">⚔️ 武侠</option>
+                            <option value="科幻">🚀 科幻</option>
+                            <option value="都市">🏙️ 都市</option>
+                            <option value="古代言情">🌸 古代言情</option>
                         </select>
                     </div>
                     <div class="form-group ai-toggle">
                         <label class="switch-label">
                             <input type="checkbox" id="bgAI">
                             <span class="switch"></span>
-                            使用 AI 增强
+                            <span>使用 AI 增强</span>
                         </label>
                     </div>
-                    <button class="btn-primary" onclick="Generator.generateBackground()">生成世界观</button>
+                    <button class="btn-primary" onclick="Generator.generateBackground()">🌍 生成世界观</button>
                 </div>
                 <div class="gen-results card">
-                    <h3>世界观设定</h3>
+                    <h3><span class="card-icon">🗺️</span> 世界观设定</h3>
                     <div id="bgResults" class="results-area">
-                        <p class="empty-hint">点击「生成世界观」开始</p>
+                        <p class="empty-hint">点击「生成世界观」开始 🌍</p>
                     </div>
                 </div>
             </div>
@@ -271,21 +275,21 @@
         <!-- Novel Name Page -->
         <section class="page" id="page-novel-name">
             <div class="page-header">
-                <h1>小说起名</h1>
+                <h1><span class="h-icon">📖</span> <span class="h-text">小说起名</span></h1>
                 <p class="page-desc">根据类型生成吸引人的小说书名</p>
             </div>
             <div class="generator-layout">
                 <div class="gen-controls card">
-                    <h3>生成设置</h3>
+                    <h3><span class="card-icon">⚙️</span> 生成设置</h3>
                     <div class="form-group">
                         <label>小说类型</label>
                         <select id="novelNameGenre">
-                            <option value="仙侠">仙侠</option>
-                            <option value="玄幻">玄幻</option>
-                            <option value="武侠">武侠</option>
-                            <option value="科幻">科幻</option>
-                            <option value="都市">都市</option>
-                            <option value="古代言情">古代言情</option>
+                            <option value="仙侠">🏔️ 仙侠</option>
+                            <option value="玄幻">⚡ 玄幻</option>
+                            <option value="武侠">⚔️ 武侠</option>
+                            <option value="科幻">🚀 科幻</option>
+                            <option value="都市">🏙️ 都市</option>
+                            <option value="古代言情">🌸 古代言情</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -297,15 +301,15 @@
                         <label class="switch-label">
                             <input type="checkbox" id="novelNameAI">
                             <span class="switch"></span>
-                            使用 AI 增强
+                            <span>使用 AI 增强</span>
                         </label>
                     </div>
-                    <button class="btn-primary" onclick="Generator.generateNovelName()">生成书名</button>
+                    <button class="btn-primary" onclick="Generator.generateNovelName()">📖 生成书名</button>
                 </div>
                 <div class="gen-results card">
-                    <h3>生成结果</h3>
+                    <h3><span class="card-icon">📝</span> 生成结果</h3>
                     <div id="novelNameResults" class="results-area">
-                        <p class="empty-hint">点击「生成书名」开始</p>
+                        <p class="empty-hint">点击「生成书名」开始 📖</p>
                     </div>
                 </div>
             </div>
@@ -314,12 +318,12 @@
         <!-- Cover Page -->
         <section class="page" id="page-cover">
             <div class="page-header">
-                <h1>封面生成</h1>
+                <h1><span class="h-icon">🎨</span> <span class="h-text">封面生成</span></h1>
                 <p class="page-desc">输入书名和作者，自动生成风格化小说封面</p>
             </div>
             <div class="generator-layout">
                 <div class="gen-controls card">
-                    <h3>封面设置</h3>
+                    <h3><span class="card-icon">⚙️</span> 封面设置</h3>
                     <div class="form-group">
                         <label>小说书名</label>
                         <input type="text" id="coverTitle" placeholder="请输入书名...">
@@ -331,22 +335,86 @@
                     <div class="form-group">
                         <label>小说类型</label>
                         <select id="coverGenre">
-                            <option value="仙侠">仙侠</option>
-                            <option value="玄幻">玄幻</option>
-                            <option value="武侠">武侠</option>
-                            <option value="科幻">科幻</option>
-                            <option value="都市">都市</option>
-                            <option value="古代言情">古代言情</option>
+                            <option value="仙侠">🏔️ 仙侠</option>
+                            <option value="玄幻">⚡ 玄幻</option>
+                            <option value="武侠">⚔️ 武侠</option>
+                            <option value="科幻">🚀 科幻</option>
+                            <option value="都市">🏙️ 都市</option>
+                            <option value="古代言情">🌸 古代言情</option>
                         </select>
                     </div>
-                    <button class="btn-primary" onclick="Generator.generateCover()">生成封面</button>
-                    <button class="btn-secondary" id="downloadCoverBtn" style="display:none" onclick="Generator.downloadCover()">下载封面</button>
+                    <button class="btn-primary" onclick="Generator.generateCover()">🎨 生成封面</button>
+                    <button class="btn-secondary" id="downloadCoverBtn" style="display:none" onclick="Generator.downloadCover()">⬇️ 下载封面</button>
                 </div>
                 <div class="gen-results card cover-preview-card">
-                    <h3>封面预览</h3>
+                    <h3><span class="card-icon">🖼️</span> 封面预览</h3>
                     <div id="coverResults" class="results-area cover-area">
-                        <p class="empty-hint">点击「生成封面」开始</p>
+                        <p class="empty-hint">点击「生成封面」开始 🎨</p>
                         <canvas id="coverCanvas" width="600" height="900" style="display:none"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Novel Analysis & Imitation Page -->
+        <section class="page" id="page-novel-analysis">
+            <div class="page-header">
+                <h1><span class="h-icon">📚</span> <span class="h-text">小说分析与仿写</span></h1>
+                <p class="page-desc">上传小说文件，分析写作风格，一键生成仿写作品</p>
+            </div>
+            <div class="generator-layout">
+                <div class="gen-controls card">
+                    <h3><span class="card-icon">📤</span> 上传与管理</h3>
+
+                    <!-- Upload Zone -->
+                    <div class="upload-zone" id="uploadZone">
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">点击或拖拽上传小说文件</div>
+                        <div class="upload-hint">支持 PDF、DOCX、TXT 格式</div>
+                        <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt" style="display:none">
+                    </div>
+
+                    <!-- Novel List -->
+                    <div style="margin-bottom:20px">
+                        <label style="font-size:13px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:8px">已上传小说</label>
+                        <div class="novel-list" id="novelList">
+                            <p class="empty-hint" style="padding:16px">尚未上传任何小说</p>
+                        </div>
+                    </div>
+
+                    <hr style="border:none;border-top:1px solid var(--border-light);margin:20px 0">
+
+                    <!-- Imitation Settings -->
+                    <h3 style="border:none;padding:0;margin-bottom:14px"><span class="card-icon">✍️</span> 仿写设置</h3>
+                    <div class="form-group">
+                        <label>目标字数</label>
+                        <input type="number" id="imitateLength" value="1000" min="200" max="10000" step="100">
+                    </div>
+                    <div class="form-group">
+                        <label>章节数</label>
+                        <input type="number" id="imitateChapters" value="1" min="1" max="20">
+                    </div>
+                    <div class="form-group">
+                        <label>仿写范围</label>
+                        <select id="imitateScope">
+                            <option value="full">全篇风格</option>
+                            <option value="partial">前1/3风格</option>
+                        </select>
+                    </div>
+                    <div class="form-group ai-toggle">
+                        <label class="switch-label">
+                            <input type="checkbox" id="imitateAI">
+                            <span class="switch"></span>
+                            <span>使用 AI 增强</span>
+                        </label>
+                    </div>
+                    <button class="btn-primary" id="imitateBtn" onclick="NovelAnalysis.imitate()" disabled>✍️ 开始仿写</button>
+                </div>
+
+                <div class="gen-results card">
+                    <h3><span class="card-icon">📊</span> 分析结果与仿写</h3>
+                    <div id="analysisResults" class="results-area">
+                        <p class="empty-hint">上传小说文件后，选择一本小说开始分析 📚</p>
                     </div>
                 </div>
             </div>

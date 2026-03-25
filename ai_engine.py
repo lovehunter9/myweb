@@ -1,6 +1,8 @@
 import random
+import re
 import json
 import requests
+from collections import Counter, defaultdict
 from typing import Optional
 
 OLLAMA_URL = "http://localhost:11434"
@@ -19,7 +21,7 @@ def _ollama_generate(prompt: str, model: str = "qwen2:0.5b") -> Optional[str]:
         r = requests.post(
             f"{OLLAMA_URL}/api/generate",
             json={"model": model, "prompt": prompt, "stream": False},
-            timeout=60,
+            timeout=120,
         )
         if r.status_code == 200:
             return r.json().get("response", "").strip()
@@ -28,7 +30,9 @@ def _ollama_generate(prompt: str, model: str = "qwen2:0.5b") -> Optional[str]:
     return None
 
 
-# ─── Chinese Name Data ───────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════
+#  Chinese Name Data
+# ═══════════════════════════════════════════════════════════════════════
 
 SURNAMES = [
     "李", "王", "张", "刘", "陈", "杨", "赵", "黄", "周", "吴",
@@ -152,10 +156,6 @@ ABILITIES = {
     ],
 }
 
-APPEARANCE_TEMPLATES = [
-    "身材{build}，{height}，{face_desc}，{eye_desc}，{hair_desc}。{extra}",
-]
-
 BUILD_OPTIONS = ["高大魁梧", "修长挺拔", "匀称健美", "纤细苗条", "娇小玲珑", "壮硕有力", "清瘦文弱"]
 HEIGHT_OPTIONS = ["身高八尺有余", "身量中等", "身姿颀长", "高挑出众", "身段婀娜"]
 FACE_OPTIONS = [
@@ -186,7 +186,9 @@ EXTRA_APPEARANCE = [
 ]
 
 
-# ─── World / Background Setting Data ─────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════
+#  World / Background Setting Data
+# ═══════════════════════════════════════════════════════════════════════
 
 WORLD_TYPES = {
     "仙侠": {
@@ -285,7 +287,10 @@ MOUNTAIN_NAMES = ["万仞山脉", "昆仑绝岭", "天柱山脉", "龙脊山脉"
 FOREST_NAMES = ["暗影密林", "万妖森林", "灵木古林", "迷雾丛林"]
 DESERT_NAMES = ["大漠流沙", "焚天沙漠", "死亡戈壁", "黄沙万里"]
 
-# ─── Novel Title Data ─────────────────────────────────────────────────
+
+# ═══════════════════════════════════════════════════════════════════════
+#  Novel Title Data
+# ═══════════════════════════════════════════════════════════════════════
 
 NOVEL_TITLE_PATTERNS = {
     "仙侠": [
@@ -342,7 +347,10 @@ TITLE_WORDS = {
     ],
 }
 
-# ─── Cover Style Data ─────────────────────────────────────────────────
+
+# ═══════════════════════════════════════════════════════════════════════
+#  Cover Style Data
+# ═══════════════════════════════════════════════════════════════════════
 
 COVER_STYLES = {
     "仙侠": {
@@ -378,7 +386,9 @@ COVER_STYLES = {
 }
 
 
-# ─── Generator Functions ──────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════
+#  Generator Functions
+# ═══════════════════════════════════════════════════════════════════════
 
 def generate_character_name(genre: str = "classical", gender: str = "male",
                             count: int = 5, use_ai: bool = False) -> dict:
@@ -400,7 +410,7 @@ def generate_character_name(genre: str = "classical", gender: str = "male",
     for _ in range(count):
         use_compound = random.random() < 0.15
         surname = random.choice(COMPOUND_SURNAMES) if use_compound else random.choice(SURNAMES)
-        name_len = random.choice([1, 2]) if not use_compound else random.choice([1, 2])
+        name_len = random.choice([1, 2])
         given = ''.join(random.sample(chars, name_len))
         full_name = surname + given
         if full_name not in names:
@@ -557,7 +567,194 @@ def check_ai_status() -> dict:
     return {"available": available, "models": models}
 
 
-# ─── Helpers ──────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════
+#  Novel Analysis & Imitation
+# ═══════════════════════════════════════════════════════════════════════
+
+STOP_WORDS = set(
+    "的了是在不有我他她它们这那个一与和也就都而但如果因为所以"
+    "可以已经还要会被把让从到对又或很更最"
+)
+
+
+def analyze_novel(text: str) -> dict:
+    """Analyze novel text and return style metrics."""
+    char_count = len(text)
+
+    sentences = re.split(r'[。！？…]+', text)
+    sentences = [s.strip() for s in sentences if len(s.strip()) > 1]
+    sentence_count = len(sentences)
+    avg_sentence_len = round(
+        sum(len(s) for s in sentences) / max(sentence_count, 1), 1
+    )
+
+    paragraphs = [p.strip() for p in text.split('\n') if len(p.strip()) > 1]
+    paragraph_count = len(paragraphs)
+
+    dialogue_chars = sum(
+        len(m) for m in re.findall(r'[""「」『』].*?[""「」『』]', text)
+    )
+    dialogue_ratio = round(dialogue_chars / max(char_count, 1), 3)
+
+    try:
+        import jieba
+        words = [w for w in jieba.cut(text) if w.strip() and len(w) > 1]
+    except ImportError:
+        words = re.findall(r'[\u4e00-\u9fff]{2,}', text)
+
+    word_count = len(words)
+    unique_words = len(set(words))
+    vocabulary_richness = round(unique_words / max(word_count, 1), 3)
+
+    filtered = [w for w in words if w not in STOP_WORDS and len(w) >= 2]
+    freq = Counter(filtered)
+    top_words = freq.most_common(30)
+
+    style_tags = []
+    if dialogue_ratio > 0.30:
+        style_tags.append("对话密集")
+    elif dialogue_ratio > 0.15:
+        style_tags.append("对话适中")
+    else:
+        style_tags.append("叙述为主")
+
+    if avg_sentence_len > 35:
+        style_tags.append("长句铺陈")
+    elif avg_sentence_len < 15:
+        style_tags.append("短句明快")
+    else:
+        style_tags.append("句式均衡")
+
+    if vocabulary_richness > 0.55:
+        style_tags.append("词汇丰富")
+    elif vocabulary_richness < 0.3:
+        style_tags.append("用词精练")
+
+    desc_words = {"仿佛", "宛如", "好似", "如同", "犹如", "恰似", "像是"}
+    desc_count = sum(1 for w in words if w in desc_words)
+    if desc_count / max(sentence_count, 1) > 0.05:
+        style_tags.append("善用修辞")
+
+    action_puncs = text.count("！") + text.count("？")
+    if action_puncs / max(sentence_count, 1) > 0.2:
+        style_tags.append("情感强烈")
+
+    return {
+        "char_count": char_count,
+        "word_count": word_count,
+        "sentence_count": sentence_count,
+        "paragraph_count": paragraph_count,
+        "avg_sentence_len": avg_sentence_len,
+        "unique_words": unique_words,
+        "vocabulary_richness": vocabulary_richness,
+        "dialogue_ratio": dialogue_ratio,
+        "top_words": top_words,
+        "style_tags": style_tags,
+    }
+
+
+def _chinese_num(n: int) -> str:
+    nums = "零一二三四五六七八九十"
+    if n <= 10:
+        return nums[n]
+    if n < 20:
+        return "十" + (nums[n - 10] if n > 10 else "")
+    if n < 100:
+        return nums[n // 10] + "十" + (nums[n % 10] if n % 10 else "")
+    return str(n)
+
+
+def imitate_novel(text: str, analysis: dict, target_length: int = 1000,
+                  chapters: int = 1, scope: str = "full",
+                  use_ai: bool = False) -> dict:
+    """Generate text that imitates the style of the given novel."""
+
+    if scope == "partial":
+        text = text[:len(text) // 3]
+
+    if use_ai and _ollama_available():
+        sample = text[:3000]
+        tags = "、".join(analysis.get("style_tags", []))
+        prompt = (
+            f"请模仿以下小说的写作风格，创作一篇约{target_length}字、"
+            f"共{chapters}个章节的文章。\n"
+            f"原文风格特点：{tags}\n"
+            f"平均句长：{analysis.get('avg_sentence_len', 20)}字\n"
+            f"对话比例：{analysis.get('dialogue_ratio', 0.1)*100:.0f}%\n\n"
+            f"原文示例：\n{sample}\n\n"
+            f"请模仿上述风格进行创作，不要复述原文。"
+        )
+        result = _ollama_generate(prompt)
+        if result:
+            return {"text": result, "source": "ai"}
+
+    # Character-level n-gram Markov chain
+    n = 6
+    if len(text) < 500:
+        n = 3
+    elif len(text) < 2000:
+        n = 4
+
+    model = defaultdict(list)
+    for i in range(len(text) - n):
+        key = text[i:i + n]
+        model[key].append(text[i + n])
+
+    if not model:
+        return {"text": "原文过短，无法生成仿写内容。请上传更长的文本。", "source": "template"}
+
+    keys = list(model.keys())
+    chapter_len = target_length // max(chapters, 1)
+    output_parts = []
+
+    for ch in range(chapters):
+        if chapters > 1:
+            output_parts.append(f"\n\n第{_chinese_num(ch + 1)}章\n\n")
+
+        current = random.choice(keys)
+        buf = []
+        for _ in range(chapter_len):
+            if current in model:
+                nxt = random.choice(model[current])
+                buf.append(nxt)
+                current = current[1:] + nxt
+            else:
+                current = random.choice(keys)
+
+        chunk = ''.join(buf)
+        # Trim to last sentence boundary
+        last_punc = max(chunk.rfind('。'), chunk.rfind('！'), chunk.rfind('？'))
+        if last_punc > 0:
+            chunk = chunk[:last_punc + 1]
+        output_parts.append(chunk)
+
+    return {"text": ''.join(output_parts), "source": "template"}
+
+
+# ═══════════════════════════════════════════════════════════════════════
+#  File Parsing Helpers
+# ═══════════════════════════════════════════════════════════════════════
+
+def parse_pdf(filepath: str) -> str:
+    import pdfplumber
+    text_parts = []
+    with pdfplumber.open(filepath) as pdf:
+        for page in pdf.pages:
+            t = page.extract_text()
+            if t:
+                text_parts.append(t)
+    return '\n'.join(text_parts)
+
+
+def parse_docx(filepath: str) -> str:
+    from docx import Document
+    doc = Document(filepath)
+    return '\n'.join(p.text for p in doc.paragraphs if p.text.strip())
+
+
+# ═══════════════════════════════════════════════════════════════════════
+#  Helpers
+# ═══════════════════════════════════════════════════════════════════════
 
 def _map_genre_to_name_style(genre: str, gender: str) -> str:
     mapping = {

@@ -1,7 +1,6 @@
 import sqlite3
 import json
 import os
-from datetime import datetime
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'data', 'app.db')
 
@@ -32,13 +31,26 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
 
+        CREATE TABLE IF NOT EXISTS novels (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            filename TEXT NOT NULL,
+            content TEXT NOT NULL,
+            word_count INTEGER DEFAULT 0,
+            analysis TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+
         CREATE INDEX IF NOT EXISTS idx_generated_type ON generated_items(type);
         CREATE INDEX IF NOT EXISTS idx_calc_created ON calculator_history(created_at DESC);
         CREATE INDEX IF NOT EXISTS idx_gen_created ON generated_items(created_at DESC);
+        CREATE INDEX IF NOT EXISTS idx_novels_created ON novels(created_at DESC);
     ''')
     conn.commit()
     conn.close()
 
+
+# ─── Calculator ───────────────────────────────────────────────────────
 
 def save_calculation(expression: str, result: str) -> int:
     conn = get_db()
@@ -61,6 +73,26 @@ def get_calculations(limit: int = 50) -> list:
     conn.close()
     return [dict(r) for r in rows]
 
+
+def delete_calculation(calc_id: int) -> bool:
+    conn = get_db()
+    cursor = conn.execute('DELETE FROM calculator_history WHERE id = ?', (calc_id,))
+    conn.commit()
+    deleted = cursor.rowcount > 0
+    conn.close()
+    return deleted
+
+
+def clear_calculations() -> int:
+    conn = get_db()
+    cursor = conn.execute('DELETE FROM calculator_history')
+    conn.commit()
+    count = cursor.rowcount
+    conn.close()
+    return count
+
+
+# ─── Generated Items ─────────────────────────────────────────────────
 
 def save_generated_item(item_type: str, input_params: dict, output: dict) -> int:
     conn = get_db()
@@ -100,19 +132,59 @@ def delete_generated_item(item_id: int) -> bool:
     return deleted
 
 
-def delete_calculation(calc_id: int) -> bool:
+# ─── Novels ───────────────────────────────────────────────────────────
+
+def save_novel(title: str, filename: str, content: str, word_count: int) -> int:
     conn = get_db()
-    cursor = conn.execute('DELETE FROM calculator_history WHERE id = ?', (calc_id,))
+    cursor = conn.execute(
+        'INSERT INTO novels (title, filename, content, word_count) VALUES (?, ?, ?, ?)',
+        (title, filename, content, word_count)
+    )
+    conn.commit()
+    row_id = cursor.lastrowid
+    conn.close()
+    return row_id
+
+
+def get_novels() -> list:
+    conn = get_db()
+    rows = conn.execute(
+        'SELECT id, title, filename, word_count, analysis, created_at FROM novels ORDER BY created_at DESC'
+    ).fetchall()
+    conn.close()
+    results = []
+    for r in rows:
+        d = dict(r)
+        d['analysis'] = json.loads(d['analysis']) if d['analysis'] else None
+        results.append(d)
+    return results
+
+
+def get_novel(novel_id: int) -> dict | None:
+    conn = get_db()
+    row = conn.execute('SELECT * FROM novels WHERE id = ?', (novel_id,)).fetchone()
+    conn.close()
+    if not row:
+        return None
+    d = dict(row)
+    d['analysis'] = json.loads(d['analysis']) if d['analysis'] else None
+    return d
+
+
+def update_novel_analysis(novel_id: int, analysis: dict):
+    conn = get_db()
+    conn.execute(
+        'UPDATE novels SET analysis = ? WHERE id = ?',
+        (json.dumps(analysis, ensure_ascii=False), novel_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+def delete_novel(novel_id: int) -> bool:
+    conn = get_db()
+    cursor = conn.execute('DELETE FROM novels WHERE id = ?', (novel_id,))
     conn.commit()
     deleted = cursor.rowcount > 0
     conn.close()
     return deleted
-
-
-def clear_calculations() -> int:
-    conn = get_db()
-    cursor = conn.execute('DELETE FROM calculator_history')
-    conn.commit()
-    count = cursor.rowcount
-    conn.close()
-    return count

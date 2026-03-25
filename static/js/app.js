@@ -32,26 +32,26 @@ function initNavigation() {
     }
 }
 
-// ─── Theme ───────────────────────────────────────────────────────────
+// ─── Theme (default: light) ──────────────────────────────────────────
 function initTheme() {
-    const saved = localStorage.getItem('theme') || 'dark';
+    const saved = localStorage.getItem('theme') || 'light';
     applyTheme(saved);
 
     document.getElementById('themeToggle').addEventListener('click', () => {
         const current = document.documentElement.getAttribute('data-theme');
-        const next = current === 'light' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
         applyTheme(next);
         localStorage.setItem('theme', next);
     });
 }
 
 function applyTheme(theme) {
-    if (theme === 'light') {
-        document.documentElement.setAttribute('data-theme', 'light');
-        document.getElementById('themeIcon').textContent = '☀';
+    if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('themeIcon').textContent = '☀️';
     } else {
         document.documentElement.removeAttribute('data-theme');
-        document.getElementById('themeIcon').textContent = '☽';
+        document.getElementById('themeIcon').textContent = '🌙';
     }
 }
 
