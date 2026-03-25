@@ -34,24 +34,24 @@ function initNavigation() {
 
 // ─── Theme (default: light) ──────────────────────────────────────────
 function initTheme() {
-    const saved = localStorage.getItem('theme') || 'light';
+    const saved = localStorage.getItem('theme') || 'dark';
     applyTheme(saved);
 
     document.getElementById('themeToggle').addEventListener('click', () => {
-        const current = document.documentElement.getAttribute('data-theme');
-        const next = current === 'dark' ? 'light' : 'dark';
+        const isDark = !document.documentElement.getAttribute('data-theme');
+        const next = isDark ? 'light' : 'dark';
         applyTheme(next);
         localStorage.setItem('theme', next);
     });
 }
 
 function applyTheme(theme) {
-    if (theme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        document.getElementById('themeIcon').textContent = '☀️';
+    if (theme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.getElementById('themeIcon').textContent = '🌙';
     } else {
         document.documentElement.removeAttribute('data-theme');
-        document.getElementById('themeIcon').textContent = '🌙';
+        document.getElementById('themeIcon').textContent = '☀️';
     }
 }
 
